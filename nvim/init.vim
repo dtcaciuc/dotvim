@@ -8,21 +8,26 @@ endif
 
 call plug#begin(sitedir.'/plugged')
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'Verf/deepwhite.nvim'
-Plug 'overvale/vacme'
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'ramojus/mellifluous.nvim'
-Plug 'savq/melange-nvim'
-" Plug 'elixir-editors/vim-elixir'
-Plug 'hrsh7th/nvim-cmp'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
 Plug 'neovim/nvim-lspconfig'
+Plug 'lukas-reineke/lsp-format.nvim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'plan9-for-vimspace/acme-colors'
-" Plug 'vim-autoformat/vim-autoformat'
-" Plug 'rust-lang/rust.vim'
-" Plug 'fatih/vim-go'
-Plug 'lukas-reineke/lsp-format.nvim'
+
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
+
+Plug 'clojure-lsp/clojure-lsp'
+
+" Plug 'hrsh7th/cmp-nvim-lsp'
+" Plug 'hrsh7th/cmp-buffer'
+" Plug 'hrsh7th/cmp-path'
+" Plug 'hrsh7th/nvim-cmp'
+
+" Colors
+Plug 'yorickpeterse/vim-paper'
+Plug 'robertmeta/nofrils'
+Plug 'ramojus/mellifluous.nvim'
 call plug#end()
 
 function! WinMove(key)
@@ -83,6 +88,9 @@ set expandtab
 set tabstop=4       " number of visual spaces per TAB
 set softtabstop=4   " number of spaces in tab when editing
 set shiftwidth=4    " number of spaces to use for autoindent
+set textwidth=120
+
+set clipboard=unnamedplus
 
 " fast save and close
 nmap <leader>w :w<CR>
@@ -96,7 +104,7 @@ autocmd BufWinLeave *.* mkview
 autocmd BufWinEnter *.* silent! loadview
 
 autocmd BufNewFile,BufRead *.heex set ft=eelixir
-autocmd BufWritePre *.ex,*.exs,*.heex lua vim.lsp.buf.format()
+autocmd BufWritePre *.ex,*.exs,*.heex,*.py,*.tf,*.tfvars,*tfbackend lua vim.lsp.buf.format()
 
 let g:airline_symbols_ascii = 1
 let g:airline#extensions#nvimlsp#enabled = 1
@@ -123,9 +131,17 @@ hi link elixirOperator none
 hi def link elixirStringDelimiter String
 hi Comment guifg=#a98a70
 
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files({ cwd = vim.lsp.buf.list_workspace_folders()[1] })<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep({ cwd = vim.lsp.buf.list_workspace_folders()[1] })<cr>
+
 if exists("g:neovide")
     " colorscheme peachpuff
-    colorscheme mellifluous
+    " colorscheme mellifluous
+    " colorscheme nofrils-light
+    colorscheme paper
+
+    let g:airline_theme='atomic'
+
     let g:neovide_scroll_animation_length = 0.1
     let g:neovide_cursor_animation_length=0.01
     let g:neovide_cursor_trail_length=0.0
@@ -138,5 +154,7 @@ if exists("g:neovide")
     autocmd VimEnter * execute "cd " . expand("$HOME")
 
     set mouse=a
-    set guifont=JetBrains\ Mono:h16
+    set guifont=JetBrains\ Mono:h12
+    " :#h-slight
+    " set guifont=SF\ Mono:h14:#h-slight
 endif
